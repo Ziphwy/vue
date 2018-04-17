@@ -3,11 +3,13 @@
 import { inBrowser } from 'core/util/env'
 import { makeMap } from 'shared/util'
 
+// 笔记：命名空间
 export const namespaceMap = {
   svg: 'http://www.w3.org/2000/svg',
   math: 'http://www.w3.org/1998/Math/MathML'
 }
 
+// 笔记：保留的 HTML 标签
 export const isHTMLTag = makeMap(
   'html,body,base,head,link,meta,style,title,' +
   'address,article,aside,footer,header,h1,h2,h3,h4,h5,h6,hgroup,nav,section,' +
@@ -24,6 +26,8 @@ export const isHTMLTag = makeMap(
 
 // this map is intentionally selective, only covering SVG elements that may
 // contain child elements.
+// 翻译：这个 hashmap 是故意有选择的，只覆盖 那些可能有子元素的 SVG 元素
+// 笔记：保留的 SVG 标签
 export const isSVG = makeMap(
   'svg,animate,circle,clippath,cursor,defs,desc,ellipse,filter,font-face,' +
   'foreignObject,g,glyph,image,line,marker,mask,missing-glyph,path,pattern,' +
@@ -31,26 +35,38 @@ export const isSVG = makeMap(
   true
 )
 
+// 笔记：是否是 pre 标签
 export const isPreTag = (tag: ?string): boolean => tag === 'pre'
 
+// 是否是保留标签
 export const isReservedTag = (tag: string): ?boolean => {
   return isHTMLTag(tag) || isSVG(tag)
 }
 
+// 笔记：检查标签的命名空间（编程式创建 SVG 元素需要命名空间）
 export function getTagNamespace (tag: string): ?string {
   if (isSVG(tag)) {
     return 'svg'
   }
   // basic support for MathML
   // note it doesn't support other MathML elements being component roots
+  // 翻译：只支持最基本的 MathML，注意不支持其他的 MathML 元素作为组件的根节点
   if (tag === 'math') {
     return 'math'
   }
 }
 
+// 笔记：用来保存未知元素的缓冲区
 const unknownElementCache = Object.create(null)
+/**
+ * 笔记：
+ *  是否未知元素，满足下列任一条件
+ *    1. 不是在浏览器环境中的所有元素
+ *    2. 不是保留标签（副作用：将使用 document.createElement 创建元素）
+ */
 export function isUnknownElement (tag: string): boolean {
   /* istanbul ignore if */
+  // 非浏览器环境
   if (!inBrowser) {
     return true
   }
@@ -62,6 +78,13 @@ export function isUnknownElement (tag: string): boolean {
   if (unknownElementCache[tag] != null) {
     return unknownElementCache[tag]
   }
+  /**
+   * 笔记：
+   *  没有注册的情况下（document.registerElement）
+   *  合法的标签，构造器指向HTMLElement，
+   *  非法的标签，元素的构造器会指向 HTMLUnknownElement
+   *    其中之一：没有注册且不带连字符的 => 非法
+   */
   const el = document.createElement(tag)
   if (tag.indexOf('-') > -1) {
     // http://stackoverflow.com/a/28210364/1070244
@@ -74,4 +97,5 @@ export function isUnknownElement (tag: string): boolean {
   }
 }
 
+// 笔记：检查 input 的 type 是否合法
 export const isTextInputType = makeMap('text,number,password,search,email,tel,url')

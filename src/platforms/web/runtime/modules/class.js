@@ -15,6 +15,7 @@ function updateClass (oldVnode: any, vnode: any) {
   const el = vnode.elm
   const data: VNodeData = vnode.data
   const oldData: VNodeData = oldVnode.data
+  // 笔记：如果新节点的 staticClass，class 不存在，或者老节点上的 staticClass，class 不存在，直接返回
   if (
     isUndef(data.staticClass) &&
     isUndef(data.class) && (

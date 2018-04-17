@@ -5,6 +5,7 @@ import { warn, makeMap } from '../util/index'
 
 let initProxy
 
+// 笔记：开发环境下才使用 proxy
 if (process.env.NODE_ENV !== 'production') {
   const allowedGlobals = makeMap(
     'Infinity,undefined,NaN,isFinite,isNaN,' +
@@ -24,12 +25,14 @@ if (process.env.NODE_ENV !== 'production') {
     )
   }
 
+  // 笔记：检查 Proxy 是否是原生 API
   const hasProxy =
     typeof Proxy !== 'undefined' &&
     Proxy.toString().match(/native code/)
 
   if (hasProxy) {
     const isBuiltInModifier = makeMap('stop,prevent,self,ctrl,shift,alt,meta,exact')
+    // 笔记：为 config.keyCodes 设置代理拦截，防止设置它的值为內建修饰符
     config.keyCodes = new Proxy(config.keyCodes, {
       set (target, key, value) {
         if (isBuiltInModifier(key)) {
@@ -43,6 +46,7 @@ if (process.env.NODE_ENV !== 'production') {
     })
   }
 
+  // 笔记：如果该属性未定义且是禁止的全局变量，则提示用户不存在
   const hasHandler = {
     has (target, key) {
       const has = key in target
@@ -54,6 +58,7 @@ if (process.env.NODE_ENV !== 'production') {
     }
   }
 
+  // 笔记：如果该属性未定义，则提示用户不存在
   const getHandler = {
     get (target, key) {
       if (typeof key === 'string' && !(key in target)) {
@@ -66,6 +71,7 @@ if (process.env.NODE_ENV !== 'production') {
   initProxy = function initProxy (vm) {
     if (hasProxy) {
       // determine which proxy handler to use
+      // 笔记：如果 render 函数存在，使用 getHandler，否则是用 hasHandler
       const options = vm.$options
       const handlers = options.render && options.render._withStripped
         ? getHandler

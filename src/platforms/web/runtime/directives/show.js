@@ -3,7 +3,9 @@
 import { enter, leave } from '../modules/transition'
 
 // recursively search for possible transition defined inside the component root
+// 翻译：在组件根节点内部递归查找可能的 transition
 function locateNode (vnode: VNode): VNodeWithData {
+  // 笔记：如果 vnode 是组件，data.transition 不存在，则查找该实例的 vnode，否则返回当前 vnode
   return vnode.componentInstance && (!vnode.data || !vnode.data.transition)
     ? locateNode(vnode.componentInstance._vnode)
     : vnode

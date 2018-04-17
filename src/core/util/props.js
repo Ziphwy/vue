@@ -18,20 +18,28 @@ type PropOptions = {
   validator: ?Function
 };
 
+/**
+ * 笔记：
+ *  校验 props 的操作都在子组件上进行
+ */
 export function validateProp (
   key: string,
   propOptions: Object,
   propsData: Object,
   vm?: Component
 ): any {
+  // 笔记：从 propOptions 提取组件的 props 选项，从 propsData 提取 props 的值
   const prop = propOptions[key]
   const absent = !hasOwn(propsData, key)
   let value = propsData[key]
   // handle boolean props
+  // 翻译：处理布尔型 props
   if (isType(Boolean, prop.type)) {
     if (absent && !hasOwn(prop, 'default')) {
+      // 笔记：属性值不存在且没有 default 配置，重置值为 false
       value = false
     } else if (!isType(String, prop.type) && (value === '' || value === hyphenate(key))) {
+      // 笔记：
       value = true
     }
   }
@@ -169,6 +177,17 @@ function assertType (value: any, type: Function): {
  * Use function string name to check built-in types,
  * because a simple equality check will fail when running
  * across different vms / iframes.
+ *
+ * 翻译：
+ *  使用函数字符串名称检查內建类型，因为一个简单的相等判断运行在不同的 vms / iframes 会失败
+ *
+ * 笔记：
+ *  q: 不同的 vms / iframes 指的是跨平台？
+ *
+ *  该函数主要提供给 props 检查 type 使用
+ *  type 的值可以为:
+ *  1. 单独的构造器函数 Boolean
+ *  2. 构造器函数数组 [Number, Boolean]
  */
 function getType (fn) {
   const match = fn && fn.toString().match(/^\s*function (\w+)/)
@@ -177,8 +196,10 @@ function getType (fn) {
 
 function isType (type, fn) {
   if (!Array.isArray(fn)) {
+    // 笔记：如果不是数组，
     return getType(fn) === getType(type)
   }
+  // 笔记：如果是数组，检查是否符合其中一个
   for (let i = 0, len = fn.length; i < len; i++) {
     if (getType(fn[i]) === getType(type)) {
       return true

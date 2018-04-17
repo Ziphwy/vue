@@ -7,6 +7,11 @@ import { warn, isPlainObject } from '../util/index'
 export function initAssetRegisters (Vue: GlobalAPI) {
   /**
    * Create asset registration methods.
+   * 翻译：
+   *  创建资源注册方法
+   *
+   * 笔记：
+   *  Vue.directive 和 Vue.component
    */
   ASSET_TYPES.forEach(type => {
     Vue[type] = function (
@@ -14,6 +19,7 @@ export function initAssetRegisters (Vue: GlobalAPI) {
       definition: Function | Object
     ): Function | Object | void {
       if (!definition) {
+        // 笔记：没有定义，认为是读取操作
         return this.options[type + 's'][id]
       } else {
         /* istanbul ignore if */
@@ -25,10 +31,12 @@ export function initAssetRegisters (Vue: GlobalAPI) {
             )
           }
         }
+        // 笔记：如果是 component，创建一个子构造器
         if (type === 'component' && isPlainObject(definition)) {
           definition.name = definition.name || id
           definition = this.options._base.extend(definition)
         }
+        // 笔记：全局的 directive 只接受函数参数注册
         if (type === 'directive' && typeof definition === 'function') {
           definition = { bind: definition, update: definition }
         }

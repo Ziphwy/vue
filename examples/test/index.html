@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="../../dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app"><div v-if="show">a</div><div v-else>b</div><test></test><haha></haha></div>
+  <script>
+    var i = 0
+    var vm = []
+    var mixins = [{
+      created () {
+        vm[i++] = this
+      }
+    }]
+
+var inner = Vue.extend({
+      mixins,
+      template: '<div><a>{{ link.a +"-" + y}}</a></div>',
+      props: ['link'],
+      data () {
+        return {
+          y: 2
+        }
+      },
+      components: {
+        inner
+      }
+    })
+
+    var test = Vue.extend({
+      mixins,
+      template: '<div><inner :link="x"></inner><inner link="2"></inner>{{ x }}</div>',
+      data () {
+        return {
+          x: { a: 'test' }
+        }
+      },
+      components: {
+        inner
+      }
+    })
+
+    var haha = Vue.extend({
+      mixins,
+      template: '<div><inner link="3"></inner><inner link="4"></inner></div>',
+      components: {
+        inner
+      }
+    })
+
+    var root = new Vue({
+      el: '#app',
+      data () {
+        return {
+          show: true
+        }
+      },
+      components: {
+        test,
+        haha
+      },
+      methods: {
+        leave () {}
+      }
+    })
+
+  </script>
+</body>
+
+</html>

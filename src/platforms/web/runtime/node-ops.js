@@ -2,18 +2,34 @@
 
 import { namespaceMap } from 'web/util/index'
 
+/**
+ * 该模块主要是对浏览器原生 DOM API 的封装
+ */
+
 export function createElement (tagName: string, vnode: VNode): Element {
   const elm = document.createElement(tagName)
   if (tagName !== 'select') {
     return elm
   }
-  // false or null will remove the attribute but undefined will not
+  /**
+   * false or null will remove the attribute but undefined will not
+   *
+   * 翻译：
+   *  节点 data 中 multiple 值是 false 和 null，将移除 multiple
+   *
+   * 笔记：
+   *  如果是 select 元素，multiple 不是 undefined 的话，设置 multiple 为 multiple
+   *  q: false 和 null 的时候，vnode.data.attrs 会移除该特性，使得不渲染，但是 undefined 不会？但为什么其他属性不需要呢？
+   */
   if (vnode.data && vnode.data.attrs && vnode.data.attrs.multiple !== undefined) {
     elm.setAttribute('multiple', 'multiple')
   }
   return elm
 }
 
+/**
+ * 笔记：主要是使用命名空间创建 SVG 和 MathML
+ */
 export function createElementNS (namespace: string, tagName: string): Element {
   return document.createElementNS(namespaceMap[namespace], tagName)
 }

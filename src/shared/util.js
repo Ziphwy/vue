@@ -33,6 +33,19 @@ export function isPrimitive (value: any): boolean %checks {
  * Quick object check - this is primarily used to tell
  * Objects from primitive values when we know the value
  * is a JSON-compliant type.
+ *
+ * 翻译：
+ *  快速对象检查
+ *  主要用于说明这个对象区别于基本类型，当我们知道这个值是符合 JSON 类型
+ *
+ * 笔记：
+ *  typeof 返回 6 种类型：
+ *    number  boolean  string  object  function undefined
+ *  es6 增加了 symbol
+ *  而 typeof null === 'object'
+ *  该函数主要是为了区分对象和基本类型，以便知道哪些是可展开变量
+ *
+ *  另外 json 文法是支持基本类型的，此处说 JSON-compliant 似乎不太恰当
  */
 export function isObject (obj: mixed): boolean %checks {
   return obj !== null && typeof obj === 'object'
@@ -61,6 +74,8 @@ export function isRegExp (v: any): boolean {
 
 /**
  * Check if val is a valid array index.
+ * 翻译：检查是否是一个合法数组索引
+ * 笔记：大于 0，不是小数，有限
  */
 export function isValidArrayIndex (val: any): boolean {
   const n = parseFloat(String(val))
@@ -90,6 +105,14 @@ export function toNumber (val: string): number | string {
 /**
  * Make a map and return a function for checking if a key
  * is in that map.
+ *
+ * 翻译：
+ *  生成一个 map 并且返回一个函数，用于检查一个 key 存在于这个 map
+ *
+ * 笔记：
+ *  1. hashmap 工具
+ *  2. 参数 str 为源数据，使用 `,` 号分割符
+ *  3. 参数 expectsLowerCase = true 设置检查模式为大小写不敏感
  */
 export function makeMap (
   str: string,
@@ -117,6 +140,8 @@ export const isReservedAttribute = makeMap('key,ref,slot,slot-scope,is')
 
 /**
  * Remove an item from an array
+ *
+ * 翻译：从数组移除一个元素，splice 的封装
  */
 export function remove (arr: Array<any>, item: any): Array<any> | void {
   if (arr.length) {
@@ -129,6 +154,11 @@ export function remove (arr: Array<any>, item: any): Array<any> | void {
 
 /**
  * Check whether the object has the property.
+ *
+ * 翻译：检查对象是否拥有该属性
+ *
+ * 笔记：
+ *  一般使用 Object.prototype 上的方法是因为，在子类可以重写 hasOwnProperty，导致了非预期的结果
  */
 const hasOwnProperty = Object.prototype.hasOwnProperty
 export function hasOwn (obj: Object | Array<*>, key: string): boolean {
@@ -148,6 +178,7 @@ export function cached<F: Function> (fn: F): F {
 
 /**
  * Camelize a hyphen-delimited string.
+ * 翻译：连字符写法转换为驼峰写法
  */
 const camelizeRE = /-(\w)/g
 export const camelize = cached((str: string): string => {
@@ -156,6 +187,7 @@ export const camelize = cached((str: string): string => {
 
 /**
  * Capitalize a string.
+ * 翻译：首字母大写
  */
 export const capitalize = cached((str: string): string => {
   return str.charAt(0).toUpperCase() + str.slice(1)
@@ -163,6 +195,7 @@ export const capitalize = cached((str: string): string => {
 
 /**
  * Hyphenate a camelCase string.
+ * 翻译：驼峰写法转换为连字符写法
  */
 const hyphenateRE = /\B([A-Z])/g
 export const hyphenate = cached((str: string): string => {
@@ -201,6 +234,8 @@ export function toArray (list: any, start?: number): Array<any> {
 
 /**
  * Mix properties into target object.
+ * 翻译：从目标对象中混合属性
+ * 笔记：浅克隆
  */
 export function extend (to: Object, _from: ?Object): Object {
   for (const key in _from) {
@@ -226,6 +261,7 @@ export function toObject (arr: Array<any>): Object {
  * Perform no operation.
  * Stubbing args to make Flow happy without leaving useless transpiled code
  * with ...rest (https://flow.org/blog/2017/05/07/Strict-Function-Call-Arity/)
+ * 翻译：空函数 `make Flow happy` (> o <)!
  */
 export function noop (a?: any, b?: any, c?: any) {}
 
@@ -236,6 +272,7 @@ export const no = (a?: any, b?: any, c?: any) => false
 
 /**
  * Return same value
+ * 翻译：返回相同的值。。。
  */
 export const identity = (_: any) => _
 
@@ -251,6 +288,14 @@ export function genStaticKeys (modules: Array<ModuleOptions>): string {
 /**
  * Check if two values are loosely equal - that is,
  * if they are plain objects, do they have the same shape?
+ *
+ * 翻译：
+ *  检查两个值是否弱等价
+ *  如果他们是简单对象，他们会有相同的形状吗？
+ *
+ * 笔记：
+ *  两个简单对象弱等价，意味着他们有相同的键/值（相同的外形，长得一样）,
+ *  强等价时，对象的引用都是指向一块内存，基础变量的值相同
  */
 export function looseEqual (a: any, b: any): boolean {
   if (a === b) return true
